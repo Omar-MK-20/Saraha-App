@@ -28,10 +28,13 @@ export async function bootstrap()
 
     server.use(notFoundRoute);
 
-    server.listen(SEVER_PORT, () =>
+    if (!process.env.vercel)
     {
-        console.log(`Server is running on port :: ${SEVER_PORT}`);
-    });
+        server.listen(SEVER_PORT, () =>
+        {
+            console.log(`Server is running on port :: ${SEVER_PORT}`);
+        });
+    }
 
     return server;
 }
