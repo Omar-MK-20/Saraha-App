@@ -34,7 +34,7 @@ It issues JWT access and refresh tokens and supports role-based authorization fo
 
 ``` bash
 src/
-├── main.js                         # App entrypoint (bootstraps the server)
+├── index.js                         # App entrypoint (bootstraps the server)
 ├── app.bootstrap.js               # Express setup, middleware, routes
 
 ├── DB/
@@ -203,7 +203,7 @@ Returns a new `accessToken` (along with the authenticated user data). The refres
 
 ## Scripts
 
-- `dev`: `node --watch ./src/main.js`
+- `dev`: `node --watch ./src/index.js`
 
 ## Notes / Architecture Details
 
