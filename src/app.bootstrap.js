@@ -33,4 +33,5 @@ export async function bootstrap()
         console.log(`Server is running on port :: ${SEVER_PORT}`);
     });
 
+    return server;
 }
