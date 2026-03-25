@@ -19,6 +19,7 @@ export async function bootstrap()
 
     server.use(express.json());
 
+    server.get("/", (req, res) => { res.json("Hello from Saraha App"); });
 
     server.use("/auth", authRouter);
     server.use("/users", userRouter);
