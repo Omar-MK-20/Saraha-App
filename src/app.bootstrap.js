@@ -29,7 +29,7 @@ export async function bootstrap()
 
     server.use(notFoundRoute);
 
-    if (!process.env.vercel)
+    if (!process.env.VERCEL)
     {
         server.listen(SEVER_PORT, () =>
         {
