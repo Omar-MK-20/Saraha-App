@@ -1,8 +1,6 @@
-import { UserModel } from "../../DB/Models/user.model.js";
-import { AuthType, TokenType } from "../../util/Enums/token.enums.js";
-import { ContentError, NotFoundError, UnauthorizedError } from "../../util/Res/ResponseError.js";
+import { TokenType } from "../../util/Enums/token.enums.js";
 import { getSuccessObject } from "../../util/Res/ResponseObject.js";
-import { tokenGenerator, verifyToken } from "../../util/Security/token.js";
+import { tokenGenerator } from "../../util/Security/token.js";
 
 // export async function getSingleUser(headers)
 // {

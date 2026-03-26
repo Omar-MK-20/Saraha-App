@@ -3,10 +3,10 @@
 
 import { Router } from "express";
 import { AuthType, TokenType } from "../../util/Enums/token.enums.js";
-import { authentication, authorization } from "../../util/Middleware/authMiddleware.js";
+import { UserRole } from "../../util/Enums/user.enums.js";
+import { authentication, authorization } from "../../util/Middleware/AuthMiddleware.js";
 import { getSuccessObject, successResponse } from "../../util/Res/ResponseObject.js";
 import * as userService from "./user.service.js";
-import { UserRole } from "../../util/Enums/user.enums.js";
 
 export const userRouter = Router();
 

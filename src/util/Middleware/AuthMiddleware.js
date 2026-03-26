@@ -1,6 +1,5 @@
 import { UserModel } from "../../DB/Models/user.model.js";
 import { AuthType, TokenType } from "../Enums/token.enums.js";
-import { UserRole } from "../Enums/user.enums.js";
 import { ContentError, ForbiddenError, UnauthorizedError } from "../Res/ResponseError.js";
 import { verifyToken } from "../Security/token.js";
 
