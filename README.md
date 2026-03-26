@@ -107,6 +107,26 @@ Required variables:
 
 The server attempts a DB connection on startup, then listens on `SEVER_PORT`.
 
+## Deployment
+
+### Live Demo / Try It Here
+
+You can test the deployed backend directly using:
+
+`https://saraha-app-backend-livid.vercel.app/`
+
+Use the same API paths as documented below (e.g. `/auth/signup`, `/auth/login`, `/users/`). This deployed URL is intended for trying the API without running the server locally.
+
+Quick try flow (email/password):
+
+1. Create an account:
+   - `POST https://saraha-app-backend-livid.vercel.app/auth/signup`
+2. Log in and get tokens:
+   - `POST https://saraha-app-backend-livid.vercel.app/auth/login`
+3. Call protected routes:
+   - Send `Authorization: Bearer <accessToken>` to `GET /users/`
+   - Send `Authorization: Bearer <refreshToken>` to `POST /users/renew-token`
+
 ## API Endpoints
 
 All routes accept JSON bodies (`express.json()`) and live under these prefixes:
