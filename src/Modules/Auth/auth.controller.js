@@ -22,14 +22,34 @@ authRouter.post("/login", async (req, res) =>
 
 authRouter.post("/signup/gmail", async (req, res) =>
 {
-    const result = await authService.signupWithGoogle(req.body);
+    let idToken;
+    if (req.body?.idToken)
+    {
+        idToken = req.body.idToken;
+    }
+    else
+    {
+        idToken = req.headers.authorization;
+    }
+
+    const result = await authService.signupWithGoogle(idToken);
 
     return successResponse(res, result);
 });
 
 authRouter.post("/login/gmail", async (req, res) =>
 {
-    const result = await authService.loginWithGoogle(req.body);
+    let idToken;
+    if (req.body?.idToken)
+    {
+        idToken = req.body.idToken;
+    }
+    else
+    {
+        idToken = req.headers.authorization;
+    }
+    
+    const result = await authService.loginWithGoogle(idToken);
 
     return successResponse(res, result);
 });

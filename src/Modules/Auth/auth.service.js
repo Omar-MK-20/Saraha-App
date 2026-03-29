@@ -50,10 +50,8 @@ export async function login(bodyData)
     return successObject(200, "login successful", user);
 }
 
-export async function signupWithGoogle(bodyData)
+export async function signupWithGoogle(idToken)
 {
-    const { idToken } = bodyData;
-
     const googleTokenPayload = await verifyGoogleAuth(idToken);
 
     if (!googleTokenPayload.email_verified)
@@ -69,7 +67,7 @@ export async function signupWithGoogle(bodyData)
         {
             throw new ConflictError({ message: "account already exist, login with your email and password", info: { email: googleTokenPayload.email } });
         }
-        return loginWithGoogle(bodyData);
+        return loginWithGoogle(idToken);
     }
 
     const userObject = {
@@ -89,10 +87,8 @@ export async function signupWithGoogle(bodyData)
 
 }
 
-export async function loginWithGoogle(bodyData)
+export async function loginWithGoogle(idToken)
 {
-    const { idToken } = bodyData;
-
     const googleTokenPayload = await verifyGoogleAuth(idToken);
 
     if (!googleTokenPayload.email_verified)
@@ -108,7 +104,7 @@ export async function loginWithGoogle(bodyData)
     }
     if (!existUser)
     {
-        return signupWithGoogle(bodyData);
+        return signupWithGoogle(idToken);
     }
 
 
