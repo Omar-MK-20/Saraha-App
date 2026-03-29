@@ -16,8 +16,8 @@ It issues JWT access and refresh tokens and supports role-based authorization fo
 - Email/password signup + login
 - Google “gmail” signup + login using an `idToken`
 - Protected routes:
-    - `GET /users/` (access token)
-    - `POST /users/renew-token` (refresh token)
+  - `GET /users/` (access token)
+  - `POST /users/renew-token` (refresh token)
 - Centralized error handling with custom error classes
 - CORS + JSON request bodies
 
@@ -127,6 +127,37 @@ Quick try flow (email/password):
    - Send `Authorization: Bearer <accessToken>` to `GET /users/`
    - Send `Authorization: Bearer <refreshToken>` to `POST /users/renew-token`
 
+## API Documentation (Postman)
+
+The API is documented in this Postman collection:
+
+`https://documenter.getpostman.com/view/40585195/2sBXikoBbW`
+
+- This collection contains **all available endpoints** for the backend.
+- Main groups you’ll typically use:
+  - **Auth**: signup/login (including Google ID token endpoints)
+  - **Users**: authenticated user info and token renewal
+- Most endpoints can be tested directly via Postman by choosing the right environment (below) and sending requests.
+
+## Postman Environments
+
+The Postman collection uses these base URLs:
+
+- `remoteServer`: `https://saraha-app-backend-livid.vercel.app`
+  - Use this for **quick testing** without running the backend locally.
+- `localDevServer`: `http://localhost:3000`
+  - Use this during **local development** (matches the default dev port in `config/.env.dev`).
+- `localProdServer`: `http://localhost:5000`
+  - Use this to run locally using the **production-like port** (matches `config/.env.prod`).
+
+## Google OAuth limitations
+
+Google signup/login endpoints (`/auth/signup/gmail`, `/auth/login/gmail`) require Google OAuth credentials.
+
+- `GOOGLE_CLIENT_ID` (and the related Google OAuth secret) are **not shared** publicly.
+- Because of that, **Google signup/login will not work on the deployed (remote) server**.
+- To test Google authentication, run the backend **locally** and provide your own Google OAuth credentials.
+
 ## API Endpoints
 
 All routes accept JSON bodies (`express.json()`) and live under these prefixes:
@@ -231,4 +262,4 @@ Returns a new `accessToken` (along with the authenticated user data). The refres
 - **Phone encryption at rest:** `phone` is encrypted before saving, and decrypted automatically via the Mongoose schema getter when reading.
 - **Password storage:** `password` is hashed with bcrypt and stored with `select: false` in the schema, so it is only selected explicitly during login.
 - **Error format:** custom `ResponseError` instances are returned with:
-    - `error`, `statusCode`, and optional `info`
+  - `error`, `statusCode`, and optional `info`
