@@ -1,13 +1,15 @@
 import { UserModel } from "../../DB/Models/user.model.js";
+import { otpTypes } from "../../util/Enums/otp.enums.js";
 import { TokenType } from "../../util/Enums/token.enums.js";
 import { UserProvider } from "../../util/Enums/user.enums.js";
+import { sendMail } from "../../util/Nodemailer/mail.config.js";
 import { ConflictError, UnauthorizedError } from "../../util/Res/ResponseError.js";
 import { createSuccessObject, successObject } from "../../util/Res/ResponseObject.js";
 import { encrypt } from "../../util/Security/encryption.js";
 import { verifyGoogleAuth } from "../../util/Security/googleOAuth.js";
 import { compareHashes, hashingPassword } from "../../util/Security/hashing.js";
+import { generateOTP } from "../../util/Security/otp.js";
 import { tokenGenerator } from "../../util/Security/token.js";
-
 
 export async function signup(bodyData)
 {
@@ -24,6 +26,9 @@ export async function signup(bodyData)
     bodyData.phone = encrypt(bodyData.phone);
 
     const { password, ...result } = (await UserModel.create(bodyData)).toObject();
+
+    const otp = generateOTP();
+    sendMail({ email: bodyData.email, otp: otp, reason: otpTypes.verifyEmail, username: bodyData.userName });
 
     return createSuccessObject("user", result);
 }
