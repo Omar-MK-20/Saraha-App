@@ -13,7 +13,9 @@ const transporter = nodemailer.createTransport({
 });
 
 
-
+/**
+ * @param {{ email: string, username: string, reason: string, otp: string }} emailOptions 
+ */
 export async function sendMail({ email, username, reason, otp })
 {
     try
@@ -21,24 +23,22 @@ export async function sendMail({ email, username, reason, otp })
         const htmlFilePath = path.resolve("src/util/Nodemailer/mailTemplate.html");
         let htmlFileContent = await fs.readFile(htmlFilePath, "utf-8");
 
-        htmlFileContent = htmlFileContent.replace("[username]", username)
-        htmlFileContent = htmlFileContent.replace("[reason]", reason)
-        htmlFileContent = htmlFileContent.replace("[otp]", otp)
+        htmlFileContent = htmlFileContent.replace("[username]", username);
+        htmlFileContent = htmlFileContent.replace("[reason]", reason);
+        htmlFileContent = htmlFileContent.replace("[otp]", otp);
+
+        const subject = reason.split(" ").map(word => word.slice(0, 1).toUpperCase() + word.slice(1)).join(" ");
 
         const info = await transporter.sendMail({
-            from: '"Example Team" <team@example.com>', // sender address
-            to: email, // list of recipients
-            subject: "Hello", // subject line
-            text: "Hello world?", // plain text body
-            html: htmlFileContent, // HTML body
+            from: '"Saraha Team" <info@saraha.com>',
+            to: email,
+            subject: subject,
+            html: htmlFileContent,
         });
 
-        console.log("Message sent: %s", info.messageId);
-        // Preview URL is only available when using an Ethereal test account
-        console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
-    } catch (err)
+    }
+    catch (err)
     {
-        console.error("Error while sending mail:", err);
         throw new ResponseError("Error while sending mail", 500, err);
     }
 }
