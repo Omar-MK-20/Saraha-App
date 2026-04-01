@@ -13,20 +13,24 @@ const transporter = nodemailer.createTransport({
 });
 
 
-const htmlFilePath = path.resolve("src/util/Nodemailer/mailTemplate.html");
-const readHtmlFile = await fs.readFile(htmlFilePath, "utf-8");
 
-
-export async function sendMail({ email })
+export async function sendMail({ email, username, reason, otp })
 {
     try
     {
+        const htmlFilePath = path.resolve("src/util/Nodemailer/mailTemplate.html");
+        let htmlFileContent = await fs.readFile(htmlFilePath, "utf-8");
+
+        htmlFileContent = htmlFileContent.replace("[username]", username)
+        htmlFileContent = htmlFileContent.replace("[reason]", reason)
+        htmlFileContent = htmlFileContent.replace("[otp]", otp)
+
         const info = await transporter.sendMail({
             from: '"Example Team" <team@example.com>', // sender address
             to: email, // list of recipients
             subject: "Hello", // subject line
             text: "Hello world?", // plain text body
-            html: readHtmlFile, // HTML body
+            html: htmlFileContent, // HTML body
         });
 
         console.log("Message sent: %s", info.messageId);
