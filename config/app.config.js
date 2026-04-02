@@ -14,3 +14,4 @@ export const TOKEN_SIGNATURE_USER_REFRESH = process.env.TOKEN_SIGNATURE_USER_REF
 export const GOOGLE_CLIENT_ID = process.env.GOOGLE_CLIENT_ID;
 export const GOOGLE_NODEMAILER_USER = process.env.GOOGLE_NODEMAILER_USER;
 export const GOOGLE_APP_PASSWORD = process.env.GOOGLE_APP_PASSWORD;
+export const DB_URI_FALLBACK = process.env.DB_URI_FALLBACK;
