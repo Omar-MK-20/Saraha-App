@@ -18,10 +18,7 @@ const UserSchema = new mongoose.Schema({
         required: function () { return this.provider == UserProvider.system; },
         select: false,
     },
-    DOB: {
-        type: Date,
-        required: function () { return this.provider == UserProvider.system; },
-    },
+    DOB: Date,
     gender: {
         type: String,
         enum: Object.values(UserGender),
@@ -35,6 +32,7 @@ const UserSchema = new mongoose.Schema({
         type: String,
         get: function (value)
         {
+            console.log(value);
             if (!value) { return; }
             try
             {
