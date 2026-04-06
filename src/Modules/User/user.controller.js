@@ -2,11 +2,15 @@
 // import { bulkCreate, createUser, deleteUser, getAllUsers, getSingleUser, login, updateUser } from "./user.service.js";
 
 import { Router } from "express";
+import { FileFormats, FolderName } from "../../util/Enums/file.enums.js";
 import { AuthType, TokenType } from "../../util/Enums/token.enums.js";
 import { UserRole } from "../../util/Enums/user.enums.js";
 import { authentication, authorization } from "../../util/Middleware/AuthMiddleware.js";
+import { validation } from "../../util/Middleware/ValidationMiddleware.js";
+import { upload } from "../../util/Multer/multer.config.js";
 import { getSuccessObject, successResponse } from "../../util/Res/ResponseObject.js";
 import * as userService from "./user.service.js";
+import { profilePicSchema } from "./user.validation.js";
 
 export const userRouter = Router();
 
@@ -30,6 +34,40 @@ userRouter.post("/renew-token",
 
         return successResponse(res, result);
     });
+
+
+userRouter.post("/profile-pic",
+    authentication(TokenType.access, AuthType.bearer),
+    authorization(UserRole.user),
+    upload({
+        folderName: FolderName.profilePics,
+        allowedFormats: [...FileFormats.image],
+        fileSize: 10
+    }).single("profilePic"),
+    validation(profilePicSchema),
+    async (req, res) =>
+    {
+        const result = await userService.uploadProfilePic(req.file, req.user);
+        return successResponse(res, result);
+    });
+
+userRouter.post("/cover-pics",
+    authentication(TokenType.access, AuthType.bearer),
+    authorization(UserRole.user),
+    upload({
+        folderName: FolderName.coverPics,
+        allowedFormats: [...FileFormats.image, ...FileFormats.gif],
+        fileSize: 1,
+        filesCount: 3
+    }).array("coverPics"),
+    async (req, res) =>
+    {
+        console.log(req.file);
+        const result = await userService.uploadCoverPic(req.files, req.user);
+        return successResponse(res, result);
+    });
+
+
 
 
 // userRouter.post("/signup", async (req, res) =>

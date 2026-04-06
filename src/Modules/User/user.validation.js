@@ -1,5 +1,4 @@
-import joi from "joi";
-import { ValidationType } from "../../util/Middleware/ValidationMiddleware.js";
+import { FileValidationType } from "../../util/Middleware/ValidationMiddleware.js";
 
 // export const getUserProfileSchema = {
 //     headers: joi.object({
@@ -12,3 +11,8 @@ import { ValidationType } from "../../util/Middleware/ValidationMiddleware.js";
 //         authorization: ValidationType.authorization.required(),
 //     })
 // };
+
+
+export const profilePicSchema = {
+    file: FileValidationType.required()
+};

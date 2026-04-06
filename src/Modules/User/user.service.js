@@ -1,5 +1,6 @@
+import { UserModel } from "../../DB/Models/user.model.js";
 import { TokenType } from "../../util/Enums/token.enums.js";
-import { getSuccessObject } from "../../util/Res/ResponseObject.js";
+import { getSuccessObject, successObject, updateSuccessObject } from "../../util/Res/ResponseObject.js";
 import { tokenGenerator } from "../../util/Security/token.js";
 
 // export async function getSingleUser(headers)
@@ -34,6 +35,21 @@ export async function renewToken(userData)
         }, TokenType.access);
 
     return getSuccessObject({ ...userData.toObject(), accessToken });
+}
+
+export async function uploadProfilePic(pictureData, userData)
+{
+    const result = await UserModel.updateOne({ _id: userData.id }, { profilePic: pictureData.finalPath });
+
+    return updateSuccessObject("profile picture", { result, pictureData });
+}
+
+export async function uploadCoverPic(pictureData, userData)
+{
+    const coverPicsPaths = pictureData.map(file => file.finalPath);
+    const result = await UserModel.updateOne({ _id: userData.id }, { coverPics: coverPicsPaths });
+
+    return successObject(201, "profile uploaded successfully", { result, pictureData });
 }
 
 
