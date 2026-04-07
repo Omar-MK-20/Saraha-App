@@ -88,5 +88,12 @@ export const FileValidationType = joi.object({
     filename: joi.string().required(),
     path: joi.string().required(),
     size: joi.number().required(),
-}).messages({ "any.required": "uploading media is required" })
+}).messages({ "any.required": "uploading media is required" });
 
+
+export const FilesArrayValidationType = joi.array()
+    .items(FileValidationType.required())
+    .messages({
+        "any.required": "uploading media is required",
+        "array.includesRequiredUnknowns": "no files uploaded"
+    });

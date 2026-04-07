@@ -1,4 +1,4 @@
-import { FileValidationType } from "../../util/Middleware/ValidationMiddleware.js";
+import { FilesArrayValidationType, FileValidationType } from "../../util/Middleware/ValidationMiddleware.js";
 
 // export const getUserProfileSchema = {
 //     headers: joi.object({
@@ -16,3 +16,9 @@ import { FileValidationType } from "../../util/Middleware/ValidationMiddleware.j
 export const profilePicSchema = {
     file: FileValidationType.required()
 };
+
+export const coverPicSchema = {
+    files: FilesArrayValidationType.required(),
+};
+
+

@@ -10,7 +10,7 @@ import { validation } from "../../util/Middleware/ValidationMiddleware.js";
 import { upload } from "../../util/Multer/multer.config.js";
 import { getSuccessObject, successResponse } from "../../util/Res/ResponseObject.js";
 import * as userService from "./user.service.js";
-import { profilePicSchema } from "./user.validation.js";
+import { coverPicSchema, profilePicSchema } from "./user.validation.js";
 
 export const userRouter = Router();
 
@@ -60,9 +60,9 @@ userRouter.post("/cover-pics",
         fileSize: 1,
         filesCount: 3
     }).array("coverPics"),
+    validation(coverPicSchema),
     async (req, res) =>
     {
-        console.log(req.file);
         const result = await userService.uploadCoverPic(req.files, req.user);
         return successResponse(res, result);
     });
