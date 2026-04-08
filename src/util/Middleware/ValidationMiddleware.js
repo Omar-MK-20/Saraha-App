@@ -41,6 +41,11 @@ const passwordRegExp = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8
 
 
 export const ValidationType = {
+    id: joi.string().hex().length(24).messages({
+        "string.length": "invalid id",
+        "string.hex": "invalid id",
+        "any.required": "id is required",
+    }),
     userName: joi.string().min(3).max(50).pattern(usernameRegExp).messages({
         "any.required": "username is required",
         "string.pattern.base": "Username must contain two words, each starting with a capital letter, and may include a space or hyphen (e.g., 'Omar Ahmed' or 'Omar El-Sayed')"
