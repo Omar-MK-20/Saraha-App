@@ -1,5 +1,6 @@
 import { UserModel } from "../../DB/Models/user.model.js";
 import { TokenType } from "../../util/Enums/token.enums.js";
+import { NotFoundError } from "../../util/Res/ResponseError.js";
 import { getSuccessObject, successObject, updateSuccessObject } from "../../util/Res/ResponseObject.js";
 import { tokenGenerator } from "../../util/Security/token.js";
 
@@ -50,6 +51,18 @@ export async function uploadCoverPic(pictureData, userData)
     const result = await UserModel.updateOne({ _id: userData.id }, { coverPics: coverPicsPaths });
 
     return successObject(201, "profile uploaded successfully", { result, pictureData });
+}
+
+export async function getSharedProfile(profileId)
+{
+    const existUser = await UserModel.findById(profileId).select("-role -confirmEmail -createdAt -updatedAt -__v -provider");
+
+    if (!existUser)
+    {
+        throw new NotFoundError({ message: "user not found", info: { id: profileId } });
+    }
+
+    return getSuccessObject(existUser);
 }
 
 

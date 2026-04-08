@@ -10,7 +10,7 @@ import { validation } from "../../util/Middleware/ValidationMiddleware.js";
 import { upload } from "../../util/Multer/multer.config.js";
 import { getSuccessObject, successResponse } from "../../util/Res/ResponseObject.js";
 import * as userService from "./user.service.js";
-import { coverPicSchema, profilePicSchema } from "./user.validation.js";
+import { coverPicSchema, profilePicSchema, shareProfileSchema } from "./user.validation.js";
 
 export const userRouter = Router();
 
@@ -64,6 +64,14 @@ userRouter.post("/cover-pics",
     async (req, res) =>
     {
         const result = await userService.uploadCoverPic(req.files, req.user);
+        return successResponse(res, result);
+    });
+
+userRouter.get("/share-profile/:id",
+    validation(shareProfileSchema),
+    async (req, res) =>
+    {
+        const result = await userService.getSharedProfile(req.params.id);
         return successResponse(res, result);
     });
 
