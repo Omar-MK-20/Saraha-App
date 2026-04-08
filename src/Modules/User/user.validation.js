@@ -1,5 +1,5 @@
 import joi from "joi";
-import { ValidationType } from "../../util/Middleware/ValidationMiddleware.js";
+import { FilesArrayValidationType, FileValidationType, ValidationType } from "../../util/Middleware/ValidationMiddleware.js";
 
 // export const getUserProfileSchema = {
 //     headers: joi.object({
@@ -12,3 +12,19 @@ import { ValidationType } from "../../util/Middleware/ValidationMiddleware.js";
 //         authorization: ValidationType.authorization.required(),
 //     })
 // };
+
+
+export const profilePicSchema = {
+    file: FileValidationType.required()
+};
+
+export const coverPicSchema = {
+    files: FilesArrayValidationType.required(),
+};
+
+
+export const shareProfileSchema = {
+    params: joi.object({
+        id: ValidationType.id.required()
+    })
+};

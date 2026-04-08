@@ -1,6 +1,6 @@
 import joi from "joi";
-import { ContentError } from "../Res/ResponseError.js";
 import { UserGender } from "../Enums/user.enums.js";
+import { ContentError } from "../Res/ResponseError.js";
 
 /**
  * @param {{body?: import("joi").ObjectSchema}} schema 
@@ -41,6 +41,11 @@ const passwordRegExp = /^(?=.*\d)(?=.*[A-Z])(?=.*[a-z])(?=.*[^\w\d\s:])([^\s]){8
 
 
 export const ValidationType = {
+    id: joi.string().hex().length(24).messages({
+        "string.length": "invalid id",
+        "string.hex": "invalid id",
+        "any.required": "id is required",
+    }),
     userName: joi.string().min(3).max(50).pattern(usernameRegExp).messages({
         "any.required": "username is required",
         "string.pattern.base": "Username must contain two words, each starting with a capital letter, and may include a space or hyphen (e.g., 'Omar Ahmed' or 'Omar El-Sayed')"
@@ -78,4 +83,22 @@ export const ValidationType = {
 
 
 
+export const FileValidationType = joi.object({
+    fieldname: joi.string().required(),
+    originalname: joi.string().required(),
+    encoding: joi.string().required(),
+    mimetype: joi.string().required(),
+    finalPath: joi.string().required(),
+    destination: joi.string().required(),
+    filename: joi.string().required(),
+    path: joi.string().required(),
+    size: joi.number().required(),
+}).messages({ "any.required": "uploading media is required" });
 
+
+export const FilesArrayValidationType = joi.array()
+    .items(FileValidationType.required())
+    .messages({
+        "any.required": "uploading media is required",
+        "array.includesRequiredUnknowns": "no files uploaded"
+    });

@@ -6,7 +6,7 @@ import { authRouter } from './Modules/Auth/auth.controller.js';
 import { userRouter } from './Modules/User/user.controller.js';
 import { errorMiddleware } from './util/Middleware/ErrorMiddleware.js';
 import { notFoundRoute } from './util/Middleware/NotFoundRoute.js';
-
+import path from "node:path";
 
 export async function bootstrap()
 {
@@ -20,6 +20,7 @@ export async function bootstrap()
     server.use(express.json());
 
     server.get("/", (req, res) => { res.json({ message: "Hello from Saraha App" }); });
+    server.use("/uploads", express.static(path.resolve("./uploads")));
 
     server.use("/auth", authRouter);
     server.use("/users", userRouter);
