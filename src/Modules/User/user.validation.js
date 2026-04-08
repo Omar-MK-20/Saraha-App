@@ -1,4 +1,5 @@
-import { FilesArrayValidationType, FileValidationType } from "../../util/Middleware/ValidationMiddleware.js";
+import joi from "joi";
+import { FilesArrayValidationType, FileValidationType, ValidationType } from "../../util/Middleware/ValidationMiddleware.js";
 
 // export const getUserProfileSchema = {
 //     headers: joi.object({
@@ -22,3 +23,8 @@ export const coverPicSchema = {
 };
 
 
+export const shareProfileSchema = {
+    params: joi.object({
+        id: ValidationType.id.required()
+    })
+};
