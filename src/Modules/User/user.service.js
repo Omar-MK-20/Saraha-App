@@ -1,8 +1,12 @@
+import fs from "node:fs/promises";
+import path from "node:path";
 import { UserModel } from "../../DB/Models/user.model.js";
 import { TokenType } from "../../util/Enums/token.enums.js";
-import { NotFoundError } from "../../util/Res/ResponseError.js";
+import { NotFoundError, ResponseError } from "../../util/Res/ResponseError.js";
 import { getSuccessObject, successObject, updateSuccessObject } from "../../util/Res/ResponseObject.js";
 import { tokenGenerator } from "../../util/Security/token.js";
+import { moveFile } from "../../util/helpers/moveFile.js";
+import { galleryUploadPath } from "../../util/helpers/paths.js";
 
 // export async function getSingleUser(headers)
 // {
@@ -40,14 +44,57 @@ export async function renewToken(userData)
 
 export async function uploadProfilePic(pictureData, userData)
 {
+
+    if (userData.profilePic)
+    {
+        const newUploadPath = await moveToGallery(pictureData, userData);
+
+        userData.galleries.push(newUploadPath);
+        await userData.save();
+    }
+
     const result = await UserModel.updateOne({ _id: userData.id }, { profilePic: pictureData.finalPath });
 
     return updateSuccessObject("profile picture", { result, pictureData });
 }
 
+async function moveToGallery(pictureData, userData)
+{
+    try
+    {
+        const oldPicPath = path.resolve(`./${userData.profilePic}`);
+        const picName = path.basename(oldPicPath);
+
+        const galleryPath = path.resolve("." + galleryUploadPath());
+        const newPicPath = path.resolve(galleryPath, picName);
+
+        await fs.mkdir(galleryPath, { recursive: true });
+        await moveFile(oldPicPath, newPicPath);
+
+        return galleryUploadPath(picName);
+    }
+    catch (error)
+    {
+        console.log(error);
+        fs.unlink(pictureData.path);
+        throw new ResponseError("Error moving old Profile Picture to gallery", 500, { error });
+    }
+
+}
+
 export async function uploadCoverPic(pictureData, userData)
 {
     const coverPicsPaths = pictureData.map(file => file.finalPath);
+
+    if (userData.coverPics.length > 0)
+    {
+        for (const pic of userData.coverPics)
+        {
+            const picPath = path.resolve(`.${pic}`);
+            await fs.unlink(picPath);
+        }
+    }
+
     const result = await UserModel.updateOne({ _id: userData.id }, { coverPics: coverPicsPaths });
 
     return successObject(201, "profile uploaded successfully", { result, pictureData });
@@ -64,8 +111,6 @@ export async function getSharedProfile(profileId)
 
     return getSuccessObject(existUser);
 }
-
-
 
 
 
