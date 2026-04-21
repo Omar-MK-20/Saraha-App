@@ -4,7 +4,7 @@ import { ContentError, ForbiddenError, UnauthorizedError } from "../Res/Response
 import { verifyToken } from "../Security/token.js";
 
 
-export function authentication(tokenType = TokenType.access, authType = AuthType.bearer)
+export function authentication(tokenType = TokenType.access, authType = AuthType.bearer, notRequired = false)
 {
     return async (req, res, next) =>
     {
@@ -12,6 +12,10 @@ export function authentication(tokenType = TokenType.access, authType = AuthType
 
         if (!authorization)
         {
+            if (notRequired == true)
+            {
+                return next();
+            }
             throw new ContentError({ message: "token is required", info: { authorization } });
         }
 
