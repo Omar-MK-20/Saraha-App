@@ -1,9 +1,4 @@
-// import { Router } from "express";
-// import { bulkCreate, createUser, deleteUser, getAllUsers, getSingleUser, login, updateUser } from "./user.service.js";
-
 import { Router } from "express";
-import session from "express-session";
-import { EXPRESS_SESSION_KEY } from "../../../config/app.config.js";
 import { FileFormats, FolderName } from "../../util/Enums/file.enums.js";
 import { AuthType, TokenType } from "../../util/Enums/token.enums.js";
 import { UserRole } from "../../util/Enums/user.enums.js";
@@ -11,6 +6,7 @@ import { authentication, authorization } from "../../util/Middleware/AuthMiddlew
 import { validation } from "../../util/Middleware/ValidationMiddleware.js";
 import { upload } from "../../util/Multer/multer.config.js";
 import { getSuccessObject, successResponse } from "../../util/Res/ResponseObject.js";
+import { expressSession } from "../../util/session/session.config.js";
 import * as userService from "./user.service.js";
 import { coverPicSchema, profilePicSchema, shareProfileSchema } from "./user.validation.js";
 
@@ -53,6 +49,7 @@ userRouter.post("/profile-pic",
         return successResponse(res, result);
     });
 
+
 userRouter.post("/cover-pics",
     authentication(TokenType.access, AuthType.bearer),
     authorization(UserRole.user),
@@ -69,22 +66,14 @@ userRouter.post("/cover-pics",
         return successResponse(res, result);
     });
 
+
 userRouter.get("/share-profile/:id",
     authentication(TokenType.access, AuthType.bearer, true),
-    session({
-        secret: EXPRESS_SESSION_KEY,
-        resave: false,
-        saveUninitialized: true,
-        cookie: {
-            secure: false,
-            maxAge: 1000 * 60 * 1, // milliseconds * seconds * minutes = 1 min
-            sameSite: true
-        }
-    }),
+    expressSession(),
     validation(shareProfileSchema),
     async (req, res) =>
     {
-        const result = await userService.getSharedProfile(req);
+        const result = await userService.getSharedProfile(req.params.id, req.session, req.user);
         return successResponse(res, result);
     });
 
@@ -99,42 +88,3 @@ userRouter.delete("/remove-profile-pic",
     }
 );
 
-
-
-// userRouter.post("/signup", async (req, res) =>
-// {
-//     const result = await createUser(req.body);
-//     res.status(200).json(result);
-// });
-
-
-// userRouter.post("/login", async (req, res) =>
-// {
-//     const result = await login(req.body);
-//     res.status(200).json(result);
-// });
-
-
-// userRouter.patch("/", async (req, res) =>
-// {
-//     const result = await updateUser(req.headers, req.body);
-//     res.status(201).json(result);
-// });
-
-// userRouter.delete("/", async (req, res) =>
-// {
-//     const result = await deleteUser(req.headers);
-
-//     res.status(200).json(result);
-// });
-
-
-
-
-
-// userRouter.post("/bulk-create", async (req, res) =>
-// {
-//     const result = await bulkCreate(req.body);
-
-//     res.status(201).json(result);
-// });
