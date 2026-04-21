@@ -76,6 +76,16 @@ userRouter.get("/share-profile/:id",
     });
 
 
+userRouter.delete("/remove-profile-pic",
+    authentication(TokenType.access, AuthType.bearer),
+    authorization(UserRole.user, UserRole.admin),
+    async (req, res) =>
+    {
+        const result = await userService.removeProfileImage(req.user);
+        return successResponse(res, result);
+    }
+);
+
 
 
 // userRouter.post("/signup", async (req, res) =>

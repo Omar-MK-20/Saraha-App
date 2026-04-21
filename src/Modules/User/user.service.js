@@ -3,10 +3,11 @@ import path from "node:path";
 import { UserModel } from "../../DB/Models/user.model.js";
 import { TokenType } from "../../util/Enums/token.enums.js";
 import { NotFoundError, ResponseError } from "../../util/Res/ResponseError.js";
-import { getSuccessObject, successObject, updateSuccessObject } from "../../util/Res/ResponseObject.js";
+import { deleteSuccessObject, getSuccessObject, successObject, updateSuccessObject } from "../../util/Res/ResponseObject.js";
 import { tokenGenerator } from "../../util/Security/token.js";
 import { moveFile } from "../../util/helpers/moveFile.js";
 import { galleryUploadPath } from "../../util/helpers/paths.js";
+import { removeFile } from "../../util/helpers/removeFile.js";
 
 // export async function getSingleUser(headers)
 // {
@@ -112,6 +113,17 @@ export async function getSharedProfile(profileId)
     return getSuccessObject(existUser);
 }
 
+export async function removeProfileImage(userData)
+{
+    if (!userData.profilePic)
+    {
+        throw new NotFoundError({ message: "Profile Picture not found", info: { ProfilePic: userData.profilePic } });
+    }
+    await removeFile(userData.profilePic);
+    userData.profilePic = null;
+    await userData.save();
+    return deleteSuccessObject("Profile Picture");
+}
 
 
 // export async function createUser(bodyData)
