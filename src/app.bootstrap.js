@@ -32,7 +32,7 @@ export async function bootstrap()
 
     if (!process.env.VERCEL)
     {
-        server.listen(SEVER_PORT, () =>
+        server.listen(SEVER_PORT, "0.0.0.0", () =>
         {
             console.log(`Server is running on port :: ${SEVER_PORT}`);
         });
