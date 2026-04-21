@@ -2,6 +2,8 @@
 // import { bulkCreate, createUser, deleteUser, getAllUsers, getSingleUser, login, updateUser } from "./user.service.js";
 
 import { Router } from "express";
+import session from "express-session";
+import { EXPRESS_SESSION_KEY } from "../../../config/app.config.js";
 import { FileFormats, FolderName } from "../../util/Enums/file.enums.js";
 import { AuthType, TokenType } from "../../util/Enums/token.enums.js";
 import { UserRole } from "../../util/Enums/user.enums.js";
@@ -68,10 +70,21 @@ userRouter.post("/cover-pics",
     });
 
 userRouter.get("/share-profile/:id",
+    authentication(TokenType.access, AuthType.bearer, true),
+    session({
+        secret: EXPRESS_SESSION_KEY,
+        resave: false,
+        saveUninitialized: true,
+        cookie: {
+            secure: false,
+            maxAge: 1000 * 60 * 1, // milliseconds * seconds * minutes = 1 min
+            sameSite: true
+        }
+    }),
     validation(shareProfileSchema),
     async (req, res) =>
     {
-        const result = await userService.getSharedProfile(req.params.id);
+        const result = await userService.getSharedProfile(req);
         return successResponse(res, result);
     });
 

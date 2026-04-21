@@ -8,6 +8,7 @@ import { tokenGenerator } from "../../util/Security/token.js";
 import { moveFile } from "../../util/helpers/moveFile.js";
 import { galleryUploadPath } from "../../util/helpers/paths.js";
 import { removeFile } from "../../util/helpers/removeFile.js";
+import { UserRole } from "../../util/Enums/user.enums.js";
 
 // export async function getSingleUser(headers)
 // {
@@ -101,16 +102,38 @@ export async function uploadCoverPic(pictureData, userData)
     return successObject(201, "profile uploaded successfully", { result, pictureData });
 }
 
-export async function getSharedProfile(profileId)
+export async function getSharedProfile(req)
 {
-    const existUser = await UserModel.findById(profileId).select("-role -confirmEmail -createdAt -updatedAt -__v -provider");
+    const profileId = req.params.id;
+
+    const existUser = await UserModel.findById(profileId).select("-role -confirmEmail -createdAt -updatedAt -__v -provider -galleries");
 
     if (!existUser)
     {
         throw new NotFoundError({ message: "user not found", info: { id: profileId } });
     }
 
-    return getSuccessObject(existUser);
+    if (req.session.firstTry == undefined) req.session.firstTry = true;
+
+    if (req.session.firstTry)
+    {
+        if (existUser.views == undefined)
+        {
+            existUser.views = 0;
+        }
+        existUser.views++;
+        await existUser.save();
+
+        req.session.firstTry = false;
+    }
+
+    if (req.user?.role == UserRole.admin)
+    {
+        return getSuccessObject(existUser);
+    }
+
+    const { views, ...restData } = existUser.toObject();
+    return getSuccessObject(restData);
 }
 
 export async function removeProfileImage(userData)

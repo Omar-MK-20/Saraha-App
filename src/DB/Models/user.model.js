@@ -58,7 +58,11 @@ const UserSchema = new mongoose.Schema({
         enum: Object.values(UserProvider),
         default: UserProvider.system
     },
-    galleries: [String]
+    galleries: [String],
+    views: {
+        type: Number,
+        default: 0
+    }
 }, {
     toJSON: { getters: true },
     toObject: { getters: true },
