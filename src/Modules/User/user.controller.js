@@ -68,7 +68,7 @@ userRouter.post("/cover-pics",
 
 
 userRouter.get("/share-profile/:id",
-    authentication(TokenType.access, AuthType.bearer, true),
+    authentication(TokenType.access, AuthType.bearer, { notRequired: true }),
     expressSession(),
     validation(shareProfileSchema),
     async (req, res) =>

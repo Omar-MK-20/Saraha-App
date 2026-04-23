@@ -4,7 +4,7 @@ import { ContentError, ForbiddenError, UnauthorizedError } from "../Res/Response
 import { verifyToken } from "../Security/token.js";
 
 
-export function authentication(tokenType = TokenType.access, authType = AuthType.bearer, notRequired = false)
+export function authentication(tokenType = TokenType.access, authType = AuthType.bearer, { notRequired = false } = {})
 {
     return async (req, res, next) =>
     {
