@@ -1,17 +1,22 @@
-import express from 'express';
 import cors from "cors";
+import express from 'express';
+import path from "node:path";
 import { SEVER_PORT } from '../config/app.config.js';
 import { testDBConnection } from './DB/Connection.js';
+import { redisClient, testRedisConnection } from './DB/redis.connection.js';
 import { authRouter } from './Modules/Auth/auth.controller.js';
 import { userRouter } from './Modules/User/user.controller.js';
 import { errorMiddleware } from './util/Middleware/ErrorMiddleware.js';
 import { notFoundRoute } from './util/Middleware/NotFoundRoute.js';
-import path from "node:path";
 
 export async function bootstrap()
 {
 
     await testDBConnection();
+    await testRedisConnection();
+
+    // const result  = await redisClient.get("name")
+    // console.log(result)
 
     const server = express();
 
