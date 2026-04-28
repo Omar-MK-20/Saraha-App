@@ -3,6 +3,7 @@ import { randomUUID } from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 import { ContentError } from "../Res/ResponseError.js";
+import { generalUploadPath } from "../helpers/paths.js";
 
 /**
  * @param {{ folderName:string, 
@@ -27,7 +28,7 @@ export function upload(uploadOptions)
         filename(req, file, callback)
         {
             const filename = randomUUID() + "_" + file.originalname.split(" ").join("-");
-            file.finalPath = `/uploads/${folderName}/${filename}`;
+            file.finalPath = generalUploadPath(folderName, filename);
 
             return callback(null, filename);
         }

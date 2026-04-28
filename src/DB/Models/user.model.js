@@ -57,7 +57,13 @@ const UserSchema = new mongoose.Schema({
         type: String,
         enum: Object.values(UserProvider),
         default: UserProvider.system
-    }
+    },
+    galleries: [String],
+    views: {
+        type: Number,
+        default: 0
+    },
+    changeCreditTime: Date
 }, {
     toJSON: { getters: true },
     toObject: { getters: true },

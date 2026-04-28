@@ -8,9 +8,10 @@ import { ContentError, UnauthorizedError } from "../Res/ResponseError.js";
 /**
  * @param { {id: string, email: string, role: string}} userData
  * @param {string} tokenType
+ * @param {string} uuid
  * @returns {string} 
  */
-export function tokenGenerator(userData, tokenType)
+export function tokenGenerator(userData, tokenType, uuid)
 {
     // const data = { id, email, role, tokenType };
 
@@ -19,7 +20,7 @@ export function tokenGenerator(userData, tokenType)
     const signature = tokenType == TokenType.access ? accessSignature : refreshSignature;
     const expiresIn = tokenType == TokenType.access ? "10m" : "1y";
 
-    const token = jwt.sign({ ...userData, tokenType }, signature, { expiresIn: expiresIn });
+    const token = jwt.sign({ ...userData, tokenType }, signature, { expiresIn: expiresIn, jwtid: uuid });
 
     return token;
 }

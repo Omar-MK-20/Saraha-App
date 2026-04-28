@@ -1,17 +1,34 @@
-import express from 'express';
 import cors from "cors";
-import { SEVER_PORT } from '../config/app.config.js';
+import express from 'express';
+import path from "node:path";
+import { REDIS_URL, SEVER_PORT } from '../config/app.config.js';
 import { testDBConnection } from './DB/Connection.js';
+import { redisClient, testRedisConnection } from './DB/redis.connection.js';
 import { authRouter } from './Modules/Auth/auth.controller.js';
 import { userRouter } from './Modules/User/user.controller.js';
 import { errorMiddleware } from './util/Middleware/ErrorMiddleware.js';
 import { notFoundRoute } from './util/Middleware/NotFoundRoute.js';
-import path from "node:path";
 
 export async function bootstrap()
 {
 
     await testDBConnection();
+    await testRedisConnection();
+
+    if (REDIS_URL.includes("127.0.0.1"))
+    {
+        setInterval(async () =>
+        {
+            try
+            {
+                await redisClient.ping();
+                console.log("PING OK");
+            } catch (err)
+            {
+                console.log("Ping failed:", err);
+            }
+        }, 5000);
+    }
 
     const server = express();
 
@@ -32,7 +49,7 @@ export async function bootstrap()
 
     if (!process.env.VERCEL)
     {
-        server.listen(SEVER_PORT, () =>
+        server.listen(SEVER_PORT, "0.0.0.0", () =>
         {
             console.log(`Server is running on port :: ${SEVER_PORT}`);
         });
