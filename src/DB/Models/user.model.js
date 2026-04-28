@@ -62,7 +62,8 @@ const UserSchema = new mongoose.Schema({
     views: {
         type: Number,
         default: 0
-    }
+    },
+    changeCreditTime: Date
 }, {
     toJSON: { getters: true },
     toObject: { getters: true },
