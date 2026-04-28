@@ -1,3 +1,4 @@
+import { randomUUID } from "node:crypto";
 import { UserModel } from "../../DB/Models/user.model.js";
 import { otpTypes } from "../../util/Enums/otp.enums.js";
 import { TokenType } from "../../util/Enums/token.enums.js";
@@ -49,8 +50,10 @@ export async function login(bodyData)
 
     let { password, ...user } = existUser.toObject();
 
-    user.accessToken = tokenGenerator({ id: user.id, email: user.email, role: user.role }, TokenType.access);
-    user.refreshToken = tokenGenerator({ id: user.id, email: user.email, role: user.role }, TokenType.refresh);
+    const uuid = randomUUID();
+
+    user.accessToken = tokenGenerator({ id: user.id, email: user.email, role: user.role }, TokenType.access, uuid);
+    user.refreshToken = tokenGenerator({ id: user.id, email: user.email, role: user.role }, TokenType.refresh, uuid);
 
     return successObject(200, "login successful", user);
 }
@@ -115,8 +118,11 @@ export async function loginWithGoogle(idToken)
 
     let { password, ...user } = existUser.toObject();
 
-    user.accessToken = tokenGenerator({ id: user.id, email: user.email, role: user.role }, TokenType.access);
-    user.refreshToken = tokenGenerator({ id: user.id, email: user.email, role: user.role }, TokenType.refresh);
+
+    const uuid = randomUUID();
+
+    user.accessToken = tokenGenerator({ id: user.id, email: user.email, role: user.role }, TokenType.access, uuid);
+    user.refreshToken = tokenGenerator({ id: user.id, email: user.email, role: user.role }, TokenType.refresh, uuid);
 
     return successObject(200, "login successful", user);
 
