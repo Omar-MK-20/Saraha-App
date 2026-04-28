@@ -1,17 +1,19 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 import { UserModel } from "../../DB/Models/user.model.js";
+import * as RedisService from "../../DB/redis.service.js";
 import { TokenType } from "../../util/Enums/token.enums.js";
 import { UserRole } from "../../util/Enums/user.enums.js";
 import { NotFoundError, ResponseError } from "../../util/Res/ResponseError.js";
 import { deleteSuccessObject, getSuccessObject, successObject, updateSuccessObject } from "../../util/Res/ResponseObject.js";
 import { tokenGenerator } from "../../util/Security/token.js";
+import { blockedTokenTitle } from "../../util/helpers/blockedTokens.js";
 import { moveFile } from "../../util/helpers/moveFile.js";
 import { galleryUploadPath } from "../../util/helpers/paths.js";
 import { removeFile } from "../../util/helpers/removeFile.js";
 
 
-export async function renewToken(userData)
+export async function renewToken(userData, tokenId)
 {
 
     const accessToken = tokenGenerator(
@@ -19,7 +21,7 @@ export async function renewToken(userData)
             id: userData.id,
             email: userData.email,
             role: userData.role
-        }, TokenType.access);
+        }, TokenType.access, tokenId);
 
     return getSuccessObject({ ...userData.toObject(), accessToken });
 }
@@ -131,3 +133,24 @@ export async function removeProfileImage(userData)
     return deleteSuccessObject("Profile Picture");
 }
 
+
+export async function logout({ userId, tokenData, formAllDevices })
+{
+
+    // logout from all devices (by changing the changeCreditTime property)
+    if (formAllDevices == true)
+    {
+        await UserModel.updateOne({ _id: userId }, { $set: { changeCreditTime: new Date() } });
+        return successObject(200, "Logged out from all devices successfully");
+    }
+    // logout from single device (by blocking the token)
+    else
+    {
+        await RedisService.set({
+            key: blockedTokenTitle(userId, tokenData.jti),
+            value: 0,
+            exValue: Math.floor((60 * 60 * 24 * 365) - (Date.now() / 1000 - tokenData.iat))
+        });
+        return successObject(200, "Logged out successfully");
+    }
+}

@@ -28,3 +28,9 @@ export const shareProfileSchema = {
         id: ValidationType.id.required()
     })
 };
+
+export const logoutSchema = {
+    body: joi.object({
+        fromAllDevices: ValidationType.fromAllDevices.required()
+    }).required()
+};

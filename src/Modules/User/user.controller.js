@@ -8,7 +8,7 @@ import { upload } from "../../util/Multer/multer.config.js";
 import { getSuccessObject, successResponse } from "../../util/Res/ResponseObject.js";
 import { expressSession } from "../../util/session/session.config.js";
 import * as userService from "./user.service.js";
-import { coverPicSchema, profilePicSchema, shareProfileSchema } from "./user.validation.js";
+import { coverPicSchema, logoutSchema, profilePicSchema, shareProfileSchema } from "./user.validation.js";
 
 export const userRouter = Router();
 
@@ -28,7 +28,7 @@ userRouter.post("/renew-token",
     authorization(UserRole.user, UserRole.admin),
     async (req, res) =>
     {
-        const result = await userService.renewToken(req.user);
+        const result = await userService.renewToken(req.user, req.payload.jti);
 
         return successResponse(res, result);
     });
@@ -88,3 +88,14 @@ userRouter.delete("/remove-profile-pic",
     }
 );
 
+
+userRouter.post("/logout",
+    authentication(TokenType.access, AuthType.bearer),
+    authorization(UserRole.user, UserRole.admin),
+    validation(logoutSchema),
+    async (req, res) =>
+    {
+        const result = await userService.logout({ userId: req.user.id, tokenData: req.payload, formAllDevices: req.valid.body.fromAllDevices });
+
+        return successResponse(res, result);
+    });
