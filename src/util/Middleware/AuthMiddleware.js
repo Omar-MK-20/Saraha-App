@@ -1,8 +1,9 @@
 import { UserModel } from "../../DB/Models/user.model.js";
+import * as redisServices from "../../DB/redis.service.js";
 import { AuthType, TokenType } from "../Enums/token.enums.js";
+import { blockedTokenTitle } from "../helpers/blockedTokens.js";
 import { ContentError, ForbiddenError, UnauthorizedError } from "../Res/ResponseError.js";
 import { verifyToken } from "../Security/token.js";
-
 
 export function authentication(tokenType = TokenType.access, authType = AuthType.bearer, { notRequired = false } = {})
 {
@@ -21,13 +22,27 @@ export function authentication(tokenType = TokenType.access, authType = AuthType
 
         const { payload } = verifyToken(authType, authorization, tokenType);
 
-        const result = await UserModel.findById(payload.id);
-        if (!result)
+        // logout from single device (by blocking the token)
+        if (await redisServices.exists(blockedTokenTitle(payload.id, payload.jti)))
+        {
+            throw new UnauthorizedError({ message: "You need to login" });
+        }
+
+
+        const user = await UserModel.findById(payload.id);
+        if (!user)
         {
             throw new UnauthorizedError({ message: "user not found, signup first" });
         }
 
-        req.user = result;
+        // logout from all devices (by changing the changeCreditTime property)
+        if (user.changeCreditTime.getTime() > (payload.iat * 1000))
+        {
+            throw new UnauthorizedError({ message: "You need to login" });
+        }
+
+        req.payload = payload;
+        req.user = user;
         next();
     };
 }
