@@ -64,7 +64,7 @@ export const ValidationType = {
     DOB()
     {
         const currentDate = new Date();
-        const eighteenYearsAgo = new Date(currentDate.setFullYear(currentDate.getFullYear() - 18)).toLocaleDateString();
+        const eighteenYearsAgo = new Date(currentDate.setFullYear(currentDate.getFullYear() - 18));
 
         return joi.date().max(eighteenYearsAgo).messages({
             "date.max": "you must be older than 18",
@@ -79,6 +79,9 @@ export const ValidationType = {
         "string.pattern.base": "Phone number must be a valid Egyptian mobile number"
     }),
     authorization: joi.string(),
+    fromAllDevices: joi.boolean().messages({
+        "any.required": "fromAllDevices is required"
+    })
 };
 
 
