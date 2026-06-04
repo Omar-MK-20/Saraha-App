@@ -91,7 +91,7 @@ export async function signupWithGoogle(idToken)
 
     await newUser.save();
 
-    return loginWithGoogle(bodyData);
+    return loginWithGoogle(idToken);
 
 }
 
